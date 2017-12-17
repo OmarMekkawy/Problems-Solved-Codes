@@ -2,7 +2,6 @@
 
 using namespace std;
 #define MOD 1000000007
-multiset<int> ToGetMed;
 int main()
 {
     int T,a,b,c,n;
@@ -13,26 +12,33 @@ int main()
     while(T--){
         scanf("%d%d%d",&a,&b,&c);
         scanf("%d",&n);
-        ToGetMed.insert(1);
         F=1;
         curmed=1;
         sum=1;
+        priority_queue<long long> one,two;
+        one.push(1);
         for(int i=1;i<n;i++){
-            F=(long long)curmed*a+b*(i+1)+c;
+            F=(long long)curmed*a+(long long)b*(i+1)+(long long)c;
             F%=MOD;
             sum+=F;
-            ToGetMed.insert(F);
-            if(ToGetMed.size()%2==0&&F<curmed){
-                set<int>::iterator it=ToGetMed.lower_bound(curmed);
-                it--;
-                curmed=*it;
+            if((one.size()+two.size())%2==0&&F>curmed){
+                two.push(-F);
+                one.push(-two.top());
+                two.pop();
             }
-            else if(ToGetMed.size()%2&&F>curmed){
-                set<int>::iterator it=ToGetMed.upper_bound(curmed);
-                curmed=*it;
+            else if((one.size()+two.size())%2==0){
+                one.push(F);
             }
+            else if((one.size()+two.size())%2&&F<curmed){
+                one.push(F);
+                two.push(-one.top());
+                one.pop();
+            }
+            else{
+                two.push(-F);
+            }
+            curmed=one.top();
         }
         printf("%lld\n",sum);
-        ToGetMed.clear();
     }
 }
