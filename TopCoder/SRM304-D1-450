@@ -1,0 +1,54 @@
+#include <vector>
+#include <list>
+#include <map>
+#include <set>
+#include <queue>
+#include <deque>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+double DP1[51][51*51][2];
+bool vis[51][51*51][2];
+class Conditional {
+public:
+	int diceCount,maxSde,val,Sum;
+	double solve(int idx,int sum,bool hasVal){
+		if(idx == diceCount && sum >= Sum)
+			return (double) hasVal;
+		else if(idx == diceCount)
+			return 0;
+		if(vis[idx][sum][hasVal])
+			return DP1[idx][sum][hasVal];
+		vis[idx][sum][hasVal] = 1;
+		for(int i=1; i<=maxSde; i++){
+			DP1[idx][sum][hasVal] += 1.0/ maxSde * solve(idx+1, sum+i, hasVal | i == val);
+		}
+		return DP1[idx][sum][hasVal];
+	}
+	double probability(int nDice, int maxSide, int v, int theSum) {
+		diceCount = nDice;
+		maxSde = maxSide;
+		val = v;
+		Sum = theSum;
+		double div = 1;
+		for(int i = 1; i<=nDice ;i++)
+			div *= (double) (maxSide-1)/(double) maxSide;
+		return   solve(0,0,0)/ (1.0 - div);
+	}
+};
+
+
+<%:testing-code%>
+//Powered by KawigiEdit 2.1.4 (beta) modified by pivanof!
